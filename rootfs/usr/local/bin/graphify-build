@@ -1,15 +1,11 @@
 #!/usr/bin/env bash
 # Builds graphify-out/ for the code mounted on /work, with no LLM and no
-# network, then runs the generators of /etc/graphify/generators.d.
+# network.
 #
 # GRAPHIFY_TARGET  directory to map, relative to /work (default: .)
-# GENERATORS_DIR   executables run afterwards, in name order (default:
-#                  /etc/graphify/generators.d). Each gets the target as $1 and
-#                  must write only inside <target>/graphify-out/.
 set -eu
 
 target=${GRAPHIFY_TARGET:-.}
-generators=${GENERATORS_DIR:-/etc/graphify/generators.d}
 
 cd /work
 rm -rf "$target/graphify-out"
@@ -18,11 +14,3 @@ graphify cluster-only "$target"
 # Not reproducible: the extraction cache and the manifest hold local state.
 rm -rf "$target/graphify-out/cache" "$target/graphify-out/manifest.json" \
        "$target/graphify-out/.graphify_analysis.json"
-
-if [ -d "$generators" ]; then
-  for generator in "$generators"/*; do
-    [ -x "$generator" ] || continue
-    echo "generator: ${generator##*/}"
-    "$generator" "$target"
-  done
-fi

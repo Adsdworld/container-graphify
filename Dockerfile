@@ -1,12 +1,11 @@
 FROM python:3.13-slim-trixie
 
 ARG GRAPHIFY_VERSION
-ARG EXTRA_PIP=""
 
 RUN apt-get update \
  && apt-get install -y --no-install-recommends git tini \
  && rm -rf /var/lib/apt/lists/* \
- && pip install --no-cache-dir "graphifyy${GRAPHIFY_VERSION:+==$GRAPHIFY_VERSION}" ${EXTRA_PIP}
+ && pip install --no-cache-dir "graphifyy${GRAPHIFY_VERSION:+==$GRAPHIFY_VERSION}"
 
 COPY rootfs/ /
 RUN chmod 755 /usr/local/bin/entrypoint.sh /usr/local/bin/graphify-build \

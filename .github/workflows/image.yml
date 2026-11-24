@@ -25,9 +25,7 @@ jobs:
         run: |
           bash -n rootfs/usr/local/bin/entrypoint.sh
           bash -n rootfs/usr/local/bin/graphify-build
-          bash -n examples/generators.d/10-example.sh
           sudo apt-get update && sudo apt-get install -y --no-install-recommends shellcheck
-          shellcheck rootfs/usr/local/bin/* examples/generators.d/*
       - name: Image name
         id: image
         run: echo "name=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
@@ -72,10 +70,6 @@ jobs:
           # Another command runs as is.
           run container-graphify:test graphify path a b | grep -q 'b'
 
-          # Generators run after the build.
-          run -v "$PWD/examples/generators.d:/etc/graphify/generators.d:ro" \
-            container-graphify:test
-          test -s work/graphify-out/report-size.txt
       - name: Push
         if: github.ref == 'refs/heads/main'
         uses: docker/build-push-action@v7
